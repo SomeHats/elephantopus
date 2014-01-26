@@ -45,7 +45,7 @@
   elephantopus.health = 100;
   healthIndicator = $('#health-indicator .inner');
   elephantopus.hurt = function(amt){
-    if (amt > elephantopus.health) {
+    if (amt >= elephantopus.health) {
       elephantopus.health = 0;
       elephantopus.kill();
     } else {

@@ -40,7 +40,7 @@ elephantopus.position.y = 720 / 2
 elephantopus.health = 100
 health-indicator = $ '#health-indicator .inner'
 elephantopus.hurt = (amt) ->
-  if amt > elephantopus.health
+  if amt >= elephantopus.health
     elephantopus.health = 0
     elephantopus.kill!
 

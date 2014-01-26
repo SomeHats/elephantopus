@@ -1,9 +1,9 @@
 $ = (s) -> document.query-selector s
 $$ = (s) -> document.query-selector-all s
 
-needed-interactions = 6
-
 window.random = (min, max) -> min + (Math.random! * (max - min))
+
+needed-interactions = random 15 25
 
 stage = new PIXI.Stage 0x333333
 view = $ '#main'
@@ -39,6 +39,7 @@ elephantopus.pivot.x = 100
 elephantopus.pivot.y = 100
 elephantopus.position.x = 1080 / 2
 elephantopus.position.y = 720 / 2
+elephantopus.alpha = 0.2
 elscale = 0.8
 elephantopus.scale.x = elephantopus.scale.y = elscale
 
@@ -109,6 +110,21 @@ background-shader.time = Date.now!
 bg.filters = [background-shader]
 
 sea-container.filters = [blur-filter]
+
+debugging = false
+
+window.add-event-listener 'keypress' (e) ->
+  if e.which is 98 and debugging is false
+    sea-container.filters = null
+    sea-container.position = x: 1080 * 0.45 y: 720 * 0.45
+    sea-container.scale = x: 0.15 y: 0.15
+    debugging := true
+
+  else if e.which is 98 and debugging is true
+    sea-container.filters = [blur-filter]
+    sea-container.position = x: 0 y: 0
+    sea-container.scale = x: 1 y: 1
+    debugging := false
 
 # BUBBLES! #
 bubbles = new BubbleField 0.3

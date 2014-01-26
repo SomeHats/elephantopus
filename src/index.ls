@@ -1,19 +1,21 @@
 $ = (s) -> document.query-selector s
 $$ = (s) -> document.query-selector-all s
 
+needed-interactions = 6
+
 window.random = (min, max) -> min + (Math.random! * (max - min))
 
 stage = new PIXI.Stage 0x333333
 view = $ '#main'
 renderer = new PIXI.WebGLRenderer 1080, 720, view
 
-# BACKGROUND #
-bg = PIXI.Sprite.from-image 'assets/img/bg-blur.png'
-stage.add-child bg
-bg.scale.x = bg.scale.y = 1
-
 sea-container = new PIXI.DisplayObjectContainer!
 stage.add-child sea-container
+
+# BACKGROUND #
+bg = PIXI.Sprite.from-image 'assets/img/bg-blur.png'
+sea-container.add-child bg
+bg.scale.x = bg.scale.y = 1
 
 # SOUNDS #
 sound-bubble-evil = $ '#bubble-evil'
@@ -37,6 +39,11 @@ elephantopus.pivot.x = 100
 elephantopus.pivot.y = 100
 elephantopus.position.x = 1080 / 2
 elephantopus.position.y = 720 / 2
+elscale = 0.8
+elephantopus.scale.x = elephantopus.scale.y = elscale
+
+window.elephantopus = elephantopus
+
 elephantopus.health = 100
 health-indicator = $ '#health-indicator .inner'
 elephantopus.hurt = (amt) ->
@@ -62,9 +69,15 @@ elephantopus.kill = ->
   elephantopus.killed = true
   elephantopus.killed-frames = 0
 
-elscale = 0.8
-elephantopus.scale.x = elephantopus.scale.y = elscale
-
+# RHINOPUS #
+# elephantopus = PIXI.Sprite.from-image 'assets/img/rhinopus.png'
+# sea-container.add-child elephantopus
+# elephantopus.pivot.x = 100
+# elephantopus.pivot.y = 100
+# elephantopus.position.x = 1080 / 2
+# elephantopus.position.y = 720 / 2
+# elscale = 0.8
+# elephantopus.scale.x = elephantopus.scale.y = elscale
 
 # TENTACLES/TRUNK #
 tentacles = new TentacleSet 6 6 20
@@ -79,6 +92,13 @@ trunk.scale.x = trunk.scale.y = 1.1
 elephantopus.add-child tentacles
 elephantopus.add-child trunk
 
+# POINTER #
+pointer = PIXI.Sprite.from-image 'assets/img/pointer.png'
+pointer.pivot = x: 50 y: 300
+pointer.position = x: 540 y: 360
+stage.add-child pointer
+pointer.alpha = 0
+
 # FILTERS #
 blur-filter = new BlurVignetteFilter!
 blur-filter.blur = 50
@@ -88,7 +108,7 @@ background-shader = new BackgroundShader!
 background-shader.time = Date.now!
 bg.filters = [background-shader]
 
-stage.filters = [blur-filter]
+sea-container.filters = [blur-filter]
 
 # BUBBLES! #
 bubbles = new BubbleField 0.3
@@ -125,13 +145,21 @@ keys = get-keys!
 npcs = new NPCController 30
 sea-container.add-child npcs
 
+elephantopus.interactions = 0
+elephantopus.interact = ->
+  elephantopus.interactions += 1
+
+  if needed-interactions <= elephantopus.interactions
+    npcs.spawn-rhinopus!
+
 # Test:
 # test = PIXI.Sprite.from-image 'assets/img/npcs/squid.png'
 # test.pivot = x: 320 y: 170
 # sea-container.add-child test
+# npcs.spawn-rhinopus!
 
 # CONST #
-acc = 0.03
+acc = 0.1
 damp = 0.01
 max-speed = 3.5
 
@@ -216,7 +244,7 @@ animate = (time) ->
     vision-indicator-bar.style.width = "#{100 * (blur-filter.outer-radius - 0.3) / 1.7}%"
   else vision-indicator.class-list.remove 'active'
 
-  # test.position <<< mouse
+  # rhinopus.position <<< mouse
 
   if elephantopus.killed and elephantopus.killed-frames < 400
     elephantopus.rotation += 0.01
@@ -224,6 +252,10 @@ animate = (time) ->
     elephantopus.alpha -= 0.002
     if elephantopus.killed-frames < 200 then bubbles.burst 1, 580, elephantopus.position.y
     elephantopus.killed-frames += 1
+
+  if npcs.spawned-rhinopus
+    pointer.alpha = 1
+    pointer.rotation = (Math.atan2 360 - rhinopus.position.y, 540 - rhinopus.position.x) - Math.PI / 2
 
   renderer.render stage
   window.request-animation-frame animate

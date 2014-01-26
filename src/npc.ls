@@ -49,18 +49,21 @@ aggressive = (npc, t) ->
 shy = (npc, t) -> neutral npc, t
 
 window.NPC = class NPC extends PIXI.Sprite
-  ({sprite, ai, pivot, max-speed = 3, extra = {}, collide = -> null}, x, y) ->
+  ({sprite, ai, pivot, max-speed = 3, extra = {}, collide = -> null, scale = 0.3, init = -> null, update = -> null}, x, y) ->
     texture = PIXI.Texture.from-image "assets/img/#{sprite}.png"
 
     super texture
 
     @ai-fn = ai
     @collide-fn = collide
+    @update-fn = update
+
+    init @
 
     @position.x = x
     @position.y = y
 
-    @scale.x = @scale.y = 0.3
+    @scale.x = @scale.y = scale
     @pivot <<< pivot
     @max-speed = max-speed
     @extra = extra
@@ -77,6 +80,8 @@ window.NPC = class NPC extends PIXI.Sprite
   update: (time, v) ~>
     @position.x -= v.x
     @position.y -= v.y
+
+    @update-fn this, time
 
     @ai-fn this, time
 
@@ -97,6 +102,7 @@ window.NPC = class NPC extends PIXI.Sprite
     if dist-sq < 8100 and not @collided
       @collided = true
       @collide-fn!
+      elephantopus.interact!
     else if dist-sq > 8100 and @collided
       @collided = false
 
@@ -135,12 +141,12 @@ random-npc = ->
     * sprite: 'npcs/heart-fish'
       ai: neutral
       pivot: x: 300 y: 200
-      collide: -> window.heal 30
+      collide: -> window.heal 10
 
     * sprite: 'npcs/monkey-fish'
       ai: shy
       pivot: x: 270 y: 300
-      collide: -> window.heal 11
+      collide: -> window.hurt 11
 
     * sprite: 'npcs/squid'
       ai: aggressive
@@ -155,6 +161,27 @@ random-npc = ->
   ]
 
   npcs[Math.floor npcs.length * Math.random!]
+
+rhinopus-spec = {
+  sprite: 'npcs/rhinopus'
+  ai: -> null
+  pivot: x: 100 y: 100
+  collide: -> alert 'YAY!'
+  scale: 0.8
+  extra:
+    is-rhinopus: true
+
+  init: (rh) ->
+    tentacles = new TentacleSet 6 6 20
+    tentacles.scale.x = tentacles.scale.y = 0.5
+    tentacles.position.x = 35
+    tentacles.position.y = 100
+    rh.add-child tentacles
+    rh.tentacles = tentacles
+
+  update: (rh, t) ->
+    rh.tentacles.update t
+}
 
 window.NPCController = class NPCController extends PIXI.DisplayObjectContainer
   (n) ->
@@ -171,7 +198,15 @@ window.NPCController = class NPCController extends PIXI.DisplayObjectContainer
     @max-y = 1080 * 3.5
     @min-y = -1080 * 2.5
 
-  add-npc: (pad = @pad) ~>
+  spawn-rhinopus: ~>
+    unless @spawned-rhinopus
+      @spawned-rhinopus = true
+
+      window.rhinopus = @add-npc @pad, rhinopus-spec
+
+      set-timeout (~> @npcs[*] = window.rhinopus), 1
+
+  add-npc: (pad = @pad, npc-spec = random-npc!) ~>
     # 1: Get random coords:
     px = random -1080, 1080
     py = random -1080, 1080
@@ -209,7 +244,7 @@ window.NPCController = class NPCController extends PIXI.DisplayObjectContainer
 
     console.log 'Create NPC:' px, py
 
-    npc = new NPC random-npc!, px, py
+    npc = new NPC npc-spec, px, py
     @add-child npc
     @npcs[*] = npc
 
@@ -221,7 +256,13 @@ window.NPCController = class NPCController extends PIXI.DisplayObjectContainer
 
       if npc.position.x < @min-x or npc.position.x > @max-x or npc.position.y < @min-y or npc.position.y > @max-y
         @remove-child npc
-        new-npcs[*] = @add-npc!
+        if npc.extra.is-rhinopus
+          rh = @add-npc @pad, rhinopus-spec
+          window.rhinopus = rh
+          new-npcs[*] = rh
+        else
+          new-npcs[*] = @add-npc!
+
         console.log 'Replace NPC!'
       else
         new-npcs[*] = npc

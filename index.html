@@ -24,7 +24,7 @@
         position: relative;
       }
 
-      canvas {
+      video {
         background: grey;
         box-shadow: 0 0 60px black;
       }
@@ -36,47 +36,31 @@
         margin-top: 10px;
       }
 
-      .indicator {
+      .skip {
         position: absolute;
-        height: 30px;
-        transition: all 0.3s ease;
-        opacity: 0;
-      }
-
-      .indicator.active {
-        opacity: 1;
-      }
-
-      .indicator img {
-        width: 30px;
-        float: left;
-      }
-
-      .indicator .bar {
-        width: 300px;
-        height: 10px;
-        margin-top: 9px;
-        margin-left: 40px;
-        border: 1px solid white;
-        -moz-box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-        -webkit-box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-      }
-
-      .indicator .inner {
-        background-color: rgba(255, 255, 255, 0.6);
-        height: 10px;
-      }
-
-      #health-indicator {
         top: 10px;
-        left: 10px;
+        right: 10px;
+        color: white;
       }
 
-      #vision-indicator {
-        top: 50px;
-        left: 10px;
+      .start {
+        display: block;
+        width: 200px;
+        position: absolute;
+        top: 600px;
+        margin-left: -100px;
+        left: 50%;
+        border: 1px solid white;
+        border-radius: 5px;
+        text-transform: uppercase;
+        -moz-box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        -webkit-box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        text-align: center;
+        padding: 10px;
+        color: white;
       }
+
     </style>
 
     <script src="pixi.dev.js"></script>
@@ -84,15 +68,9 @@
   <body>
 
     <div id="container">
-      <div class="indicator active" id="health-indicator">
-        <img src="assets/img/heart.png" alt="heath">
-        <div class="bar"><div class="inner"></div></div>
-      </div>
-      <div class="indicator" id="vision-indicator">
-        <img src="assets/img/eye.png" alt="vision">
-        <div class="bar"><div class="inner"></div></div>
-      </div>
-      <canvas width="1080" height="720" id="main"></canvas>
+      <a href="play.html" class="skip">Skip</a>
+      <a href="play.html" class="start">Start</a>
+      <video src="assets/video/intro.webm" width="1080" height="720" autoplay></video>
       <p>
         You need a browser that supports WebGL to play. Made for Global Game Jam 2014 by
         Leonie van der Linde, Dee Saigal and Joe Dytrych from Unicorn Joust; with sound
@@ -102,15 +80,6 @@
 
     <audio src="assets/audio/ambient.ogg" autoplay loop preload></audio>
     <audio src="assets/audio/music.ogg" autoplay loop preload></audio>
-    <audio id="bubble-evil" src="assets/audio/bubble-evil.ogg" preload></audio>
-    <audio id="bubble-friendly" src="assets/audio/bubble-friendly.ogg" preload></audio>
-    <audio id="death" src="assets/audio/death.ogg" preload></audio>
 
-    <script src="js/mouse.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/tentacle.js"></script>
-    <script src="js/bubbles.js"></script>
-    <script src="js/npc.js"></script>
-    <script src="js/index.js"></script>
   </body>
 </html>

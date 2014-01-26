@@ -17,13 +17,11 @@
       }
 
       #container {
-        position: absolute;
         width: 1080px;
         height: 780px;
-        top: 50%;
-        left: 50%;
-        margin-top: -390px;
-        margin-left: -540px;
+        margin: auto;
+        margin-top: 20px;
+        position: relative;
       }
 
       canvas {
@@ -101,8 +99,12 @@
         by Douglas Pennant. Vision icon by John Caserta.
       </p>
     </div>
-    <audio src="assets/audio/ambient.ogg" autoplay loop></audio>
-    <audio src="assets/audio/music.ogg" autoplay loop></audio>
+
+    <audio src="assets/audio/ambient.ogg" autoplay loop preload></audio>
+    <audio src="assets/audio/music.ogg" autoplay loop preload></audio>
+    <audio id="bubble-evil" src="assets/audio/bubble-evil.ogg" preload></audio>
+    <audio id="bubble-friendly" src="assets/audio/bubble-friendly.ogg" preload></audio>
+    <audio id="death" src="assets/audio/death.ogg" preload></audio>
 
     <script src="js/mouse.js"></script>
     <script src="js/filters.js"></script>

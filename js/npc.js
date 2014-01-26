@@ -199,7 +199,7 @@
           y: 170
         },
         collide: function(){
-          return window.heal(15);
+          return window.hurt(15);
         }
       }, {
         sprite: 'npcs/ufo-fish',

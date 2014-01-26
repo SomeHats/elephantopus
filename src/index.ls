@@ -15,6 +15,21 @@ bg.scale.x = bg.scale.y = 1
 sea-container = new PIXI.DisplayObjectContainer!
 stage.add-child sea-container
 
+# SOUNDS #
+sound-bubble-evil = $ '#bubble-evil'
+sound-bubble-friendly = $ '#bubble-friendly'
+sound-death = $ '#death'
+
+play-sound = (s) ->
+  s.current-time = 0
+  s.play!
+
+window.sounds = {
+  bubble-evil: -> play-sound sound-bubble-evil
+  bubble-friendly: -> play-sound sound-bubble-friendly
+  death: -> play-sound sound-death
+}
+
 # ELEPHANTOPUS #
 elephantopus = PIXI.Sprite.from-image 'assets/img/elephantopus.png'
 sea-container.add-child elephantopus
@@ -42,6 +57,7 @@ elephantopus.heal = (amt) ->
 
 elephantopus.killed = false
 elephantopus.kill = ->
+  sounds.death!
   $ '#health-indicator' .class-list.remove 'active'
   elephantopus.killed = true
   elephantopus.killed-frames = 0
@@ -84,17 +100,20 @@ vision-indicator = $ '#vision-indicator'
 vision-indicator-bar = $ '#vision-indicator .inner'
 window.clear-vision = ->
   unless elephantopus.killed
+    sounds.bubble-friendly!
     vision-indicator.class-list.add 'active'
     bubbles.burst 100
     clearing-vision := true
 
 window.hurt = (amt) ->
   unless elephantopus.killed
+    sounds.bubble-evil!
     bubbles.burst 100
     elephantopus.hurt amt
 
 window.heal = (amt) ->
   unless elephantopus.killed
+    sounds.bubble-friendly!
     bubbles.burst 100
     elephantopus.heal amt
 

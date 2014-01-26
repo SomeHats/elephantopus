@@ -145,7 +145,7 @@ random-npc = ->
     * sprite: 'npcs/squid'
       ai: aggressive
       pivot: x: 320 y: 170
-      collide: -> window.heal 15
+      collide: -> window.hurt 15
 
     * sprite: 'npcs/ufo-fish'
       ai: aggressive

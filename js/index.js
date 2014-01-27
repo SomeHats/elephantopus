@@ -43,7 +43,6 @@
   elephantopus.pivot.y = 100;
   elephantopus.position.x = 1080 / 2;
   elephantopus.position.y = 720 / 2;
-  elephantopus.alpha = 0.2;
   elscale = 0.8;
   elephantopus.scale.x = elephantopus.scale.y = elscale;
   window.elephantopus = elephantopus;
